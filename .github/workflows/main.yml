@@ -7,5 +7,5 @@ jobs:
   ui-tests:
     runs-on: ubuntu-latest
     steps:
-      pip install requirements.txt
+      pip install -r requirements.txt
       pytest
