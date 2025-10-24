@@ -171,5 +171,6 @@ def login(request, driver, selectors, click_and_assert_url_change, send_keys_to_
 def add_sweet_to_basket(get_element_by_xpath):
     def wrap(sweet_name):
         get_element_by_xpath(f'//a[@data-name="{sweet_name}"]').click()
-
+        # This is returning the price of the sweet that has been added to the basket
+        return get_element_by_xpath(f'//a[@data-name="{sweet_name}"]/ancestor::div/descendant::small[@class="text-muted"]').text
     return wrap

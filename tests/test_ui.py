@@ -11,8 +11,13 @@ def test_basket_counter(add_sweet_to_basket, get_element_by_selector, selectors)
     assert get_element_by_selector(selectors.BASKET_COUNTER).text == '1', f'Actual basket count is {get_element_by_selector(selectors.BASKET_COUNTER).text}'
 
 
-def test_empty_basket(add_sweet_to_basket, get_element_by_selector, selectors):
-    add_sweet_to_basket('Chocolate Cups')
+@pytest.mark.parametrize("sweet_name", ['Strawberry Bon Bons', 'Chocolate Cups'])
+def test_populated_basket(sweet_name, add_sweet_to_basket, get_element_by_selector, selectors, click_and_assert_url_change):
+    add_sweet_to_basket(sweet_name)
+    click_and_assert_url_change(selectors.BASKET_HEADER_LINK)
+    assert get_element_by_selector(selectors.BASKET_ITEM).text == sweet_name, f'Expected: {sweet_name}, Actual {get_element_by_selector(selectors.BASKET_ITEM).text}'
+
+
 
 def test_purchase_sweet():
     pass

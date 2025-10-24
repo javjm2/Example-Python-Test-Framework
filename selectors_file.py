@@ -12,6 +12,7 @@ class Selector:
 class Selectors:
     # Home Page
     LOGIN_HEADER_LINK = Selector('//a[contains(text(), "Login")]')
+    BASKET_HEADER_LINK = Selector('//a[contains(text(), "Basket")]')
     BASKET_COUNTER = Selector('badge-success', By.CLASS_NAME)
 
     # Login Page
@@ -24,3 +25,4 @@ class Selectors:
 
     # Basket Page
     EMPTY_BASKET_LINK = Selector("//a[contains(@onclick='emptyBasket();')]")
+    BASKET_ITEM = Selector("my-0", By.CLASS_NAME)
