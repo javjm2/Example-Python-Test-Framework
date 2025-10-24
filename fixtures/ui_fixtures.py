@@ -9,9 +9,8 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromiumService
 from webdriver_manager.chrome import ChromeDriverManager
-import subprocess
 import time
 import os
 
@@ -23,22 +22,14 @@ def selectors():
 
 @pytest.fixture
 def driver():
-
-    chromium_version = subprocess.check_output(["chromium", "--version"]).decode().strip().split()[-1]
-
     options = webdriver.ChromeOptions()
-    options.add_argument('--start-fullscreen')
+    # options.add_argument('--start-fullscreen')
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--disable-gpu')
     options.add_argument('--window-size=1920,1080')
     options.add_argument(f'--user-data-dir=/tmp/chrome_profile')
 
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager(version=chromium_version).install()),
-        options=options
-    )
+    driver = webdriver.Chrome(options=options)
     yield driver
     driver.quit()
 
