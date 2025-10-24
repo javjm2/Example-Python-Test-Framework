@@ -2,7 +2,7 @@ from functools import partial
 from typing import Any
 
 import urllib3
-
+from selenium.webdriver.common.by import By
 from selectors_file import Selectors, Selector
 import pytest
 from selenium import webdriver
@@ -91,6 +91,24 @@ def get_element_by_selector(driver, request, selectors):
 
     return wrap
 
+@pytest.fixture
+def get_element_by_xpath(driver):
+    def wrap(
+        locator: str,
+        ec: Any = EC.presence_of_element_located,
+        timeout: float = 10,
+        ):
+        try:
+            WebDriverWait(driver, timeout).until(
+            lambda driver: driver.execute_script("return document.readyState")
+            == "complete"
+            )
+            wait = WebDriverWait(driver, timeout)
+            return wait.until(ec((By.XPATH, locator)))
+        except TimeoutException:
+            pytest.fail(f"Could not find selector {locator} on {driver.current_url}")
+    return wrap
+
 
 @pytest.fixture
 def send_keys_to_input(driver, await_clickable):
@@ -131,13 +149,27 @@ def take_screenshot(driver):
 
     return wrap
 
+@pytest.fixture(autouse=True)
+def set_user_details(request):
+    request.node.username = os.environ.get('sweet_shop_user', 'you@example.com')
+    request.node.account_name = os.environ.get('sweet_shop_account_name', 'test@user.com')
+    request.node.password = os.environ.get('sweet_shop_pass', 'Password')
+
+@pytest.fixture(autouse=True)
+def go_to_site(driver):
+    driver.get('https://sweetshop.netlify.app/')
+
 
 @pytest.fixture
-def login(driver, selectors, click_and_assert_url_change, send_keys_to_input):
-    driver.get('https://sweetshop.netlify.app/')
+def login(request, driver, selectors, click_and_assert_url_change, send_keys_to_input):
     click_and_assert_url_change(selectors.LOGIN_HEADER_LINK)
-
-    send_keys_to_input(selectors.EMAIL_INPUT_FIELD, os.environ.get('', 'you@example.com'))
-    send_keys_to_input(selectors.PASSWORD_INPUT_FIELD, os.environ.get('', 'Password'))
+    send_keys_to_input(selectors.EMAIL_INPUT_FIELD, request.node.username)
+    send_keys_to_input(selectors.PASSWORD_INPUT_FIELD, request.node.password)
     click_and_assert_url_change(selectors.LOGIN_BUTTON)
 
+@pytest.fixture
+def add_sweet_to_basket(get_element_by_xpath):
+    def wrap(sweet_name):
+        get_element_by_xpath(f'//a[@data-name="{sweet_name}"]').click()
+
+    return wrap
