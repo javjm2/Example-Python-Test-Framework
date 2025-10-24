@@ -33,7 +33,7 @@ def driver():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
     options.add_argument('--window-size=1920,1080')
-    options.add_argument(f'--user-data-dir={tempfile.mkdtemp()}')
+    options.add_argument(f'--user-data-dir=/tmp/chrome_profile')
 
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager(version=chromium_version).install()),
