@@ -20,7 +20,7 @@ jobs:
 
       - name: Install Chrome & dependencies
         run: |
-          apt update && apt install -y chromium chromium-chromedriver
+          apt update && apt install -y chromium
 
       - name: Run tests
         run: pytest
