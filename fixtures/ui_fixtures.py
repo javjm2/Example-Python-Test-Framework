@@ -1,6 +1,5 @@
 from functools import partial
 from typing import Any
-import tempfile
 import urllib3
 from selenium.webdriver.common.by import By
 from selectors_file import Selectors, Selector
@@ -10,7 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.chrome.service import Service as ChromiumService
-from webdriver_manager.chrome import ChromeDriverManager
 import time
 import os
 
@@ -50,11 +48,12 @@ def click_and_assert_url_change(
             await_url_changes(previous_url, timeout=timeout)
             WebDriverWait(driver, timeout).until(
                 lambda driver: driver.execute_script("return document.readyState")
-                               == "complete"
+                == "complete"
             )
             time.sleep(0.5)
         except (TimeoutException, urllib3.exceptions.ReadTimeoutError):
-            pytest.fail(f"Page navigation failed, still on {previous_url} page")
+            pytest.fail(
+                f"Page navigation failed, still on {previous_url} page")
 
     return wrap
 
@@ -67,9 +66,13 @@ def await_url_changes(driver):
 
     return wrap
 
+
 @pytest.fixture
 def await_clickable(get_element_by_selector):
-    return partial(get_element_by_selector, ec=EC.visibility_of_element_located)
+    return partial(
+        get_element_by_selector,
+        ec=EC.visibility_of_element_located)
+
 
 @pytest.fixture
 def get_element_by_selector(driver, request, selectors):
@@ -81,7 +84,7 @@ def get_element_by_selector(driver, request, selectors):
         try:
             WebDriverWait(driver, timeout).until(
                 lambda driver: driver.execute_script("return document.readyState")
-                               == "complete"
+                == "complete"
             )
             return WebDriverWait(driver, timeout).until(
                 ec((selector.by, selector.value))
@@ -97,22 +100,24 @@ def get_element_by_selector(driver, request, selectors):
 
     return wrap
 
+
 @pytest.fixture
 def get_element_by_xpath(driver):
     def wrap(
         locator: str,
         ec: Any = EC.presence_of_element_located,
         timeout: float = 10,
-        ):
+    ):
         try:
             WebDriverWait(driver, timeout).until(
-            lambda driver: driver.execute_script("return document.readyState")
-            == "complete"
+                lambda driver: driver.execute_script("return document.readyState")
+                == "complete"
             )
             wait = WebDriverWait(driver, timeout)
             return wait.until(ec((By.XPATH, locator)))
         except TimeoutException:
-            pytest.fail(f"Could not find selector {locator} on {driver.current_url}")
+            pytest.fail(
+                f"Could not find selector {locator} on {driver.current_url}")
     return wrap
 
 
@@ -155,11 +160,15 @@ def take_screenshot(driver):
 
     return wrap
 
+
 @pytest.fixture(autouse=True)
 def set_user_details(request):
-    request.node.username = os.environ.get('sweet_shop_user', 'you@example.com')
-    request.node.account_name = os.environ.get('sweet_shop_account_name', 'test@user.com')
+    request.node.username = os.environ.get(
+        'sweet_shop_user', 'you@example.com')
+    request.node.account_name = os.environ.get(
+        'sweet_shop_account_name', 'test@user.com')
     request.node.password = os.environ.get('sweet_shop_pass', 'Password')
+
 
 @pytest.fixture(autouse=True)
 def go_to_site(driver):
@@ -167,16 +176,24 @@ def go_to_site(driver):
 
 
 @pytest.fixture
-def login(request, driver, selectors, click_and_assert_url_change, send_keys_to_input):
+def login(
+        request,
+        driver,
+        selectors,
+        click_and_assert_url_change,
+        send_keys_to_input):
     click_and_assert_url_change(selectors.LOGIN_HEADER_LINK)
     send_keys_to_input(selectors.EMAIL_INPUT_FIELD, request.node.username)
     send_keys_to_input(selectors.PASSWORD_INPUT_FIELD, request.node.password)
     click_and_assert_url_change(selectors.LOGIN_BUTTON)
 
+
 @pytest.fixture
 def add_sweet_to_basket(get_element_by_xpath):
     def wrap(sweet_name):
         get_element_by_xpath(f'//a[@data-name="{sweet_name}"]').click()
-        # This is returning the price of the sweet that has been added to the basket
-        return get_element_by_xpath(f'//a[@data-name="{sweet_name}"]/ancestor::div/descendant::small[@class="text-muted"]').text
+        # This is returning the price of the sweet that has been added to the
+        # basket
+        return get_element_by_xpath(
+            f'//a[@data-name="{sweet_name}"]/ancestor::div/descendant::small[@class="text-muted"]').text
     return wrap
