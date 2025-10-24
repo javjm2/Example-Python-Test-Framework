@@ -1,6 +1,6 @@
 from functools import partial
 from typing import Any
-
+import tempfile
 import urllib3
 from selenium.webdriver.common.by import By
 from selectors_file import Selectors, Selector
@@ -23,10 +23,10 @@ def selectors():
 def driver():
     options = webdriver.ChromeOptions()
     options.add_argument('--start-fullscreen')
-    driver = webdriver.Chrome(options=options)
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--window-size=1920,1080')
+    options.add_argument(f'--user-data-dir={tempfile.mkdtemp()}')
 
     driver = webdriver.Chrome(
         service=ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()),
