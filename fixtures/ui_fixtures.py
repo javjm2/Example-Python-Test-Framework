@@ -22,6 +22,9 @@ def selectors():
 
 @pytest.fixture
 def driver():
+
+    chromium_version = subprocess.check_output(["chromium", "--version"]).decode().strip().split()[-1]
+
     options = webdriver.ChromeOptions()
     options.add_argument('--start-fullscreen')
     options.add_argument('--headless')
@@ -32,7 +35,7 @@ def driver():
     options.add_argument(f'--user-data-dir={tempfile.mkdtemp()}')
 
     driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
+        service=Service(ChromeDriverManager(version=chromium_version).install()),
         options=options
     )
     yield driver
