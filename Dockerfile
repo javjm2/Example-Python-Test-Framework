@@ -1,4 +1,4 @@
-# Use official Python image
+# Use Python image
 FROM python:3.12-slim
 
 # Install dependencies for Chromium
@@ -23,10 +23,7 @@ RUN apt-get update && apt-get install -y \
 # Set environment variable for Chromium path (needed for Selenium)
 ENV CHROME_PATH=/usr/bin/chromium
 
-# Set working directory
-WORKDIR /app
-
-# Copy your project
+# Copy project into container
 COPY . .
 
 # Install Python dependencies
