@@ -21,7 +21,7 @@ jobs:
       - name: Install Chrome & dependencies
         run: |
           apt update
-          apt install chromium-browser
+          apt install chromium
 
       - name: Run tests
         run: pytest
