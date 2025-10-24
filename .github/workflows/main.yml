@@ -7,7 +7,7 @@ jobs:
   ui-tests:
     runs-on: ubuntu-latest
     container:
-      image: python:3.11-slim
+      image: ubuntu:22.04
 
     steps:
       - name: Checkout repository
@@ -20,7 +20,7 @@ jobs:
 
       - name: Install Chrome & dependencies
         run: |
-          apt update && apt install -y chromium
+          apt update && apt install -y chromium chromium-chromedriver
 
       - name: Run tests
         run: pytest
