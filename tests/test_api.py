@@ -1,16 +1,18 @@
 def test_get_all_airports(custom_requests):
-    raise NotImplementedError("The test gets all airports has not been implemented")
+    raise NotImplementedError(
+        "The test that gets all airports has not been implemented"
+    )
 
 
 def test_get_specific_airport(custom_requests):
     raise NotImplementedError(
-        "The test gets a specific airport by its ID has not been implemented"
+        "The test that gets a specific airport by its ID has not been implemented"
     )
 
 
 def test_calculate_airport_distance(custom_requests):
     raise NotImplementedError(
-        "The test calculate the distance between two airports has not been implemented"
+        "The test that calculate the distance between two airports has not been implemented"
     )
 
 
@@ -45,7 +47,9 @@ def test_update_favourite_airport_note(custom_requests):
 
 
 def test_delete_favourite_airport(custom_requests):
-    raise NotImplementedError("The test deletes an airport has not been implemented")
+    raise NotImplementedError(
+        "The test that deletes an airport has not been implemented"
+    )
 
 
 def test_delete_all_favourites(custom_requests):
