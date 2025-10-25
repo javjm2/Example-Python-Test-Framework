@@ -12,7 +12,7 @@ def test_get_specific_airport(custom_requests):
 
 def test_calculate_airport_distance(custom_requests):
     raise NotImplementedError(
-        "The test that calculate the distance between two airports has not been implemented"
+        "The test that calculates the distance between two airports has not been implemented"
     )
 
 
