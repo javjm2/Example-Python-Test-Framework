@@ -1,6 +1,6 @@
 import os
+
 import requests
-import pytest
 
 
 def config_requests():

@@ -1,16 +1,18 @@
+import os
+import time
 from functools import partial
 from typing import Any
-import urllib3
-from selenium.webdriver.common.by import By
-from selectors_file import Selectors, Selector
+
 import pytest
+import urllib3
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.chrome.service import Service as ChromiumService
-import time
-import os
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from selectors_file import Selector, Selectors
 
 
 @pytest.fixture
@@ -22,9 +24,9 @@ def selectors():
 def driver():
     options = webdriver.ChromeOptions()
     # options.add_argument('--start-fullscreen')
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--window-size=1920,1080')
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--window-size=1920,1080")
 
     driver = webdriver.Chrome(options=options)
     yield driver
@@ -33,10 +35,10 @@ def driver():
 
 @pytest.fixture
 def click_and_assert_url_change(
-        driver,
-        await_url_changes,
-        get_element_by_selector,
-        selectors,
+    driver,
+    await_url_changes,
+    get_element_by_selector,
+    selectors,
 ):
     def wrap(locator, timeout=5) -> None:
         previous_url = driver.current_url
@@ -52,8 +54,7 @@ def click_and_assert_url_change(
             )
             time.sleep(0.5)
         except (TimeoutException, urllib3.exceptions.ReadTimeoutError):
-            pytest.fail(
-                f"Page navigation failed, still on {previous_url} page")
+            pytest.fail(f"Page navigation failed, still on {previous_url} page")
 
     return wrap
 
@@ -69,17 +70,15 @@ def await_url_changes(driver):
 
 @pytest.fixture
 def await_clickable(get_element_by_selector):
-    return partial(
-        get_element_by_selector,
-        ec=EC.visibility_of_element_located)
+    return partial(get_element_by_selector, ec=EC.visibility_of_element_located)
 
 
 @pytest.fixture
 def get_element_by_selector(driver, request, selectors):
     def wrap(
-            selector: Selector,
-            timeout=10,
-            ec: Any = EC.presence_of_element_located,
+        selector: Selector,
+        timeout=10,
+        ec: Any = EC.presence_of_element_located,
     ):
         try:
             WebDriverWait(driver, timeout).until(
@@ -90,9 +89,9 @@ def get_element_by_selector(driver, request, selectors):
                 ec((selector.by, selector.value))
             )
         except (
-                TimeoutException,
-                WebDriverException,
-                urllib3.exceptions.ReadTimeoutError,
+            TimeoutException,
+            WebDriverException,
+            urllib3.exceptions.ReadTimeoutError,
         ):
             pytest.fail(
                 f"Could not find selector {selector.value} on {driver.current_url}"
@@ -116,16 +115,16 @@ def get_element_by_xpath(driver):
             wait = WebDriverWait(driver, timeout)
             return wait.until(ec((By.XPATH, locator)))
         except TimeoutException:
-            pytest.fail(
-                f"Could not find selector {locator} on {driver.current_url}")
+            pytest.fail(f"Could not find selector {locator} on {driver.current_url}")
+
     return wrap
 
 
 @pytest.fixture
 def send_keys_to_input(driver, await_clickable):
     def wrap(
-            selector: Selector,
-            text_to_send: str,
+        selector: Selector,
+        text_to_send: str,
     ):
         web_element = await_clickable(selector)
         web_element.clear()
@@ -137,9 +136,9 @@ def send_keys_to_input(driver, await_clickable):
 @pytest.fixture
 def get_elements(get_element_by_selector, driver):
     def wrap(
-            selector: Selector,
-            timeout: float = 10,
-            ec: Any = EC.presence_of_element_located,
+        selector: Selector,
+        timeout: float = 10,
+        ec: Any = EC.presence_of_element_located,
     ):
         get_element_by_selector(selector=selector, timeout=timeout, ec=ec)
         return driver.find_elements(value=selector.value, by=selector.by)
@@ -163,25 +162,20 @@ def take_screenshot(driver):
 
 @pytest.fixture(autouse=True)
 def set_user_details(request):
-    request.node.username = os.environ.get(
-        'sweet_shop_user', 'you@example.com')
+    request.node.username = os.environ.get("sweet_shop_user", "you@example.com")
     request.node.account_name = os.environ.get(
-        'sweet_shop_account_name', 'test@user.com')
-    request.node.password = os.environ.get('sweet_shop_pass', 'Password')
+        "sweet_shop_account_name", "test@user.com"
+    )
+    request.node.password = os.environ.get("sweet_shop_pass", "Password")
 
 
 @pytest.fixture(autouse=True)
 def go_to_site(driver):
-    driver.get('https://sweetshop.netlify.app/')
+    driver.get("https://sweetshop.netlify.app/")
 
 
 @pytest.fixture
-def login(
-        request,
-        driver,
-        selectors,
-        click_and_assert_url_change,
-        send_keys_to_input):
+def login(request, driver, selectors, click_and_assert_url_change, send_keys_to_input):
     click_and_assert_url_change(selectors.LOGIN_HEADER_LINK)
     send_keys_to_input(selectors.EMAIL_INPUT_FIELD, request.node.username)
     send_keys_to_input(selectors.PASSWORD_INPUT_FIELD, request.node.password)
@@ -192,8 +186,9 @@ def login(
 def add_sweet_to_basket(get_element_by_xpath):
     def wrap(sweet_name):
         get_element_by_xpath(f'//a[@data-name="{sweet_name}"]').click()
-        # This is returning the price of the sweet that has been added to the
-        # basket
+        # This is returning the price of the sweet that has been added to the basket
         return get_element_by_xpath(
-            f'//a[@data-name="{sweet_name}"]/ancestor::div/descendant::small[@class="text-muted"]').text
+            f'//a[@data-name="{sweet_name}"]/ancestor::div/descendant::small[@class="text-muted"]'
+        ).text
+
     return wrap

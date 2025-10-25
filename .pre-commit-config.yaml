@@ -4,8 +4,6 @@ repos:
     hooks:
       - id: check-added-large-files
       - id: check-yaml
-      - id: end-of-file-fixer
-      - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/psf/black
     rev: 22.3.0
@@ -19,4 +17,4 @@ repos:
     rev: v1.7.0  # Use the latest stable tag
     hooks:
       - id: autopep8
-        args: [ --max-line-length=88 ]
+        args: [--in-place, --aggressive, --aggressive, --max-line-length=88]
