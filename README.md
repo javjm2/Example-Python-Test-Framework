@@ -11,8 +11,7 @@ You will want to start off with cloning this repository in your chosen location.
 1. `python -m venv venv` - This will create your virtual environment
 2. `pip install -r requirements.txt` - This will install all the project dependencies
 3. `pre-commit install` - This will set up all the git hook scripts
-4`pytest` - This will execute all the tests
-
+4. `pytest` - This will execute all the tests
 
 ### Running the tests inside a container (optional)
 **Note:** The below steps for running the tests inside a container are not supported on ARM CPUs yet. I will explain in the *Known limitation* section at the bottom of this readme as to why.
@@ -23,7 +22,18 @@ These tests can also be run inside a docker container. Below are the steps to ge
 2. `docker build -t selenium-sweet-shop-test .` - This will build the docker container
 3. `docker run --rm selenium-sweet-shop-test` - This will execute the tests against chrome inside the container and teardown the container
 
-issue with Microsoft python
+#### Running specific tests
+
+Here are a couple of commands to help you run a subset of the tests
+
+- Run a single test using its name - `pytest -k  <test name>`
+- Run all tests in a file - `pytest tests/<test file name>.py`
+
+**Note:** If you want to use the commands that run specific tests in a container, you will want to preface the commands with `docker run --rm selenium-sweet-shop-test`. 
+
+So as an example, the command to run the sweet shop login test will be:
+`docker run --rm selenium-sweet-shop-test pytest -k test_login`
+
 
 ## Troubleshooting guide
 
