@@ -15,7 +15,7 @@ You will want to start off with cloning this repository in your chosen location.
 
 
 ### Running the tests inside a container (optional)
-`Note: The below steps for running the tests inside a container is not supported on ARM CPUs yet. I will explain further down as to why.`
+**Note:** The below steps for running the tests inside a container are not supported on ARM CPUs yet. I will explain in the *Known limitation* section at the bottom of this readme as to why.
 
 These tests can also be run inside a docker container. Below are the steps to get the container up and running. You will need to have docker desktop installed beforehand for these steps.
 
@@ -33,7 +33,7 @@ This will outline a couple of the problems that I ran into when setting up this 
 
 The Microsoft store version of python seemingly is known to cause path and permission issue for pip, pre-commit and virtualenv.
 
-Fix: Unstall the microsoft store python version and install Python from the official Python site
+Fix: Unstall the microsoft store python version and install Python from the [official Python website](https://www.python.org/downloads/)
 
 If the issue still persists then it may be that the microsoft store python.exe is still on your system and being used. To find that out open up a command line and run:
 
@@ -48,3 +48,10 @@ If you delete that python.exe and then run:
 `where python` again then the official python.exe should now the first in the list.
 
 ## Known Limitations
+
+As mentioned earlier in the document, the set up for running the test inside a docker container is not compatible on ARM CPUs.
+The reason for this is that chrome and the chrome webdriver are both required to be installed to run these tests. ARM and x86 CPUs require different binaries installed on there respective architecture.
+
+The fix for this would be to include another docker file that installs the chrome and chrome-driver binaries compatible with ARM architecture. From what I've researched it looks like there is an image available for this `selenium/standalone-chrome:latest`. So it wouldn't be a massive change to get this to work. I do believe that is out of scope for this task though as the tests do run as expected when not running inside a container and the container steps are optional when executing the tests locally.
+
+**Note:** It is possible to emulate x86 CPUs when running a docker image. The issue with doing that in this case is that emulation is very slow and the tests will fail with an `InvalidSessionIdException` which is commonly due to a sessions being killed/disconnected (I'm assuming due to the slow speed while emulating that the connection to the chrome session dies but that is only my theory based on experimenting with this issue)
