@@ -26,7 +26,7 @@ def selectors():
 
 
 def pytest_html_report_title(report):
-    report.title = "Cushion technical task"
+    report.title = "Cushon technical task"
 
 
 @pytest.hookimpl(hookwrapper=True)

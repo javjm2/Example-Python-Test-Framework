@@ -1,5 +1,5 @@
 
-# Cushion Technical Task Documentation
+# Cushon Technical Task Documentation
  ## Project Setup
 
 This section of the guide will go over the steps required to set up this project and get the tests up and running on your system.
@@ -19,20 +19,21 @@ You will want to start off with cloning this repository in your chosen location.
 These tests can also be run inside a docker container. Below are the steps to get the container up and running. You will need to have docker desktop installed beforehand for these steps.
 
 1. Open Docker Desktop
-2. `docker build -t selenium-sweet-shop-test .` - This will build the docker container
-3. `docker run --rm selenium-sweet-shop-test` - This will execute the tests against chrome inside the container and teardown the container
+2. `docker build -t cushon-tests .` - This will build the docker container
+3. `docker run --rm cushon-tests` - This will execute the tests against chrome inside the container and teardown the container
 
-#### Running specific tests
+### Running specific tests
 
 Here are a couple of commands to help you run a subset of the tests
 
 - Run a single test using its name - `pytest -k  <test name>`
-- Run all tests in a file - `pytest tests/<test file name>.py`
+- Run all System tests - `pytest tests/test_ui.py`
+- Run all API tests - `pytest tests/test_api.py`
 
-**Note:** If you want to use the commands that run specific tests in a container, you will want to preface the commands with `docker run --rm selenium-sweet-shop-test`.
+**Note:** If you want to use the commands that run specific tests in a container, you will want to preface the commands with `docker run --rm cushon-tests`.
 
 So as an example, the command to run the sweet shop login test will be:
-`docker run --rm selenium-sweet-shop-test pytest -k test_login`
+`docker run --rm cushon-tests pytest -k test_login`
 
 #### Creating a test report
 
@@ -47,7 +48,7 @@ This will outline a couple of the problems that I ran into when setting up this 
 
 The Microsoft store version of python seemingly is known to cause path and permission issue for pip, pre-commit and virtualenv.
 
-Fix: Unstall the microsoft store python version and install Python from the [official Python website](https://www.python.org/downloads/)
+Fix: Uninstall the microsoft store python version and install Python from the [official Python website](https://www.python.org/downloads/)
 
 If the issue still persists then it may be that the microsoft store python.exe is still on your system and being used. To find that out open up a command line and run:
 
@@ -63,7 +64,7 @@ If you delete that python.exe and then run:
 
 ## Known Limitations
 
-As mentioned earlier in the document, the set up for running the test inside a docker container is not compatible on ARM CPUs.
+As mentioned earlier in this readme, the set up for running the tests inside a docker container is not compatible on ARM CPUs.
 The reason for this is that chrome and the chrome webdriver are both required to be installed to run these tests. ARM and x86 CPUs require different binaries installed on there respective architecture.
 
 The fix for this would be to include another docker file that installs the chrome and chrome-driver binaries compatible with ARM architecture. From what I've researched it looks like there is an image available for this `selenium/standalone-chrome:latest`. So it wouldn't be a massive change to get this to work. I do believe that is out of scope for this task though as the tests do run as expected when not running inside a container and the container steps are optional when executing the tests locally.

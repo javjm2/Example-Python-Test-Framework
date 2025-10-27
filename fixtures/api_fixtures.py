@@ -10,7 +10,7 @@ def config_requests():
     session.headers.update(
         {
             "accept": "application/json",
-            "Authorization": f'Basic {os.environ.get("API_KEY")}',
+            "Authorization": f'Bearer token={os.environ.get("API_KEY")}',
         }
     )
     return session
@@ -22,3 +22,21 @@ def custom_requests():
         return config_requests()
 
     return wrap
+
+
+@pytest.fixture
+def base_url():
+    return "https://airportgap.com/api"
+
+
+@pytest.fixture
+def distance_from_to_country_payload():
+    def wrap(from_country, to_country):
+        return f"from={from_country}&to={to_country}"
+
+    return wrap
+
+
+@pytest.fixture
+def token_payload():
+    return f"email=test@airportgap.com&password=airportgappassword"
