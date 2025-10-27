@@ -15,10 +15,3 @@ jobs:
 
       - name: Run tests
         run: docker run --rm selenium-sweet-shop-test
-
-
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: ui-test-report
-          path: report.html
