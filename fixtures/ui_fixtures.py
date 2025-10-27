@@ -1,10 +1,13 @@
+import base64
 import os
 import time
 from functools import partial
 from typing import Any
 
 import pytest
+import pytest_html
 import urllib3
+from pytest_metadata.plugin import metadata_key
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.chrome.service import Service as ChromiumService
@@ -14,10 +17,33 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from selectors_file import Selector, Selectors
 
+SCREENSHOT_NAME = "test_screenshot.jpg"
+
 
 @pytest.fixture
 def selectors():
     return Selectors
+
+
+def pytest_html_report_title(report):
+    report.title = "Cushion technical task"
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item):
+    outcome = yield
+    report = outcome.get_result()
+    extra = getattr(report, "extra", [])
+    if report.when == "call":
+        # Assuming your screenshot is saved correctly at the specified path
+        driver = item.funcargs["driver"]
+        driver.save_screenshot(SCREENSHOT_NAME)
+        with open(SCREENSHOT_NAME, "rb") as image_file:
+            encoded_string = base64.b64encode(
+                image_file.read()
+            ).decode()  # https://github.com/pytest-dev/pytest-html/issues/265
+        extra.append(pytest_html.extras.png(encoded_string))
+        report.extra = extra
 
 
 @pytest.fixture
@@ -142,20 +168,6 @@ def get_elements(get_element_by_selector, driver):
     ):
         get_element_by_selector(selector=selector, timeout=timeout, ec=ec)
         return driver.find_elements(value=selector.value, by=selector.by)
-
-    return wrap
-
-
-def create_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-
-@pytest.fixture
-def take_screenshot(driver):
-    def wrap(path, file_name):
-        create_dir(path)
-        driver.save_screenshot(f"{path}/{file_name}.jpg")
 
     return wrap
 

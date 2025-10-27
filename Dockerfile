@@ -34,4 +34,4 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Command to run tests
-CMD ["pytest",  "-vv"]
+CMD ["pytest",  "-vv", "--html=report.html"]

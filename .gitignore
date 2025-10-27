@@ -3,3 +3,5 @@ __pycache__/
 fixtures/__pycache__/
 tests/__pycache__/
 venv/
+test_screenshot.jpg
+assets
