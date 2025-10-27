@@ -29,11 +29,15 @@ Here are a couple of commands to help you run a subset of the tests
 - Run a single test using its name - `pytest -k  <test name>`
 - Run all tests in a file - `pytest tests/<test file name>.py`
 
-**Note:** If you want to use the commands that run specific tests in a container, you will want to preface the commands with `docker run --rm selenium-sweet-shop-test`. 
+**Note:** If you want to use the commands that run specific tests in a container, you will want to preface the commands with `docker run --rm selenium-sweet-shop-test`.
 
 So as an example, the command to run the sweet shop login test will be:
 `docker run --rm selenium-sweet-shop-test pytest -k test_login`
 
+#### Creating a test report
+
+You can also run the tests and produce a html report displaying the results of the test execution. The command to do that is:
+`pytest --html=report.html`
 
 ## Troubleshooting guide
 
