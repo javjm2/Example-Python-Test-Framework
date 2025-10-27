@@ -8,7 +8,9 @@ def test_login(login, get_element_by_selector, selectors, request):
     )
 
 
-def test_basket_counter(add_sweet_to_basket, get_element_by_selector, selectors):
+def test_basket_counter(
+    go_to_site, add_sweet_to_basket, get_element_by_selector, selectors
+):
     assert (
         get_element_by_selector(selectors.BASKET_COUNTER).text == "0"
     ), f"Actual basket count is {get_element_by_selector(selectors.BASKET_COUNTER).text}"
@@ -21,6 +23,7 @@ def test_basket_counter(add_sweet_to_basket, get_element_by_selector, selectors)
 @pytest.mark.parametrize("sweet_name", ["Sherbert Straws", "Chocolate Cups"])
 def test_populated_basket(
     sweet_name,
+    go_to_site,
     add_sweet_to_basket,
     get_element_by_selector,
     selectors,

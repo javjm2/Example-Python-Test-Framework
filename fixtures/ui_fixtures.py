@@ -34,20 +34,24 @@ def pytest_runtest_makereport(item):
     outcome = yield
     report = outcome.get_result()
     extra = getattr(report, "extra", [])
+
+    # Run only after test execution (not setup/teardown)
     if report.when == "call":
-        # Assuming your screenshot is saved correctly at the specified path
-        driver = item.funcargs["driver"]
-        driver.save_screenshot(SCREENSHOT_NAME)
-        with open(SCREENSHOT_NAME, "rb") as image_file:
-            encoded_string = base64.b64encode(
-                image_file.read()
-            ).decode()  # https://github.com/pytest-dev/pytest-html/issues/265
-        extra.append(pytest_html.extras.png(encoded_string))
-        report.extra = extra
+        driver = getattr(item, "driver", None)
+        if driver:
+            try:
+                driver.save_screenshot(SCREENSHOT_NAME)
+                with open(SCREENSHOT_NAME, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode()
+                extra.append(pytest_html.extras.png(encoded_string))
+            except Exception as e:
+                print(f"Failed to capture screenshot: {e}")
+
+        report.extras = extra
 
 
 @pytest.fixture
-def driver():
+def driver(request):
     options = webdriver.ChromeOptions()
     # options.add_argument('--start-fullscreen')
     options.add_argument("--headless")
@@ -55,7 +59,9 @@ def driver():
     options.add_argument("--window-size=1920,1080")
 
     driver = webdriver.Chrome(options=options)
+    request.node.driver = driver
     yield driver
+
     driver.quit()
 
 
@@ -181,13 +187,20 @@ def set_user_details(request):
     request.node.password = os.environ.get("sweet_shop_pass", "Password")
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def go_to_site(driver):
     driver.get("https://sweetshop.netlify.app/")
 
 
 @pytest.fixture
-def login(request, driver, selectors, click_and_assert_url_change, send_keys_to_input):
+def login(
+    go_to_site,
+    request,
+    driver,
+    selectors,
+    click_and_assert_url_change,
+    send_keys_to_input,
+):
     click_and_assert_url_change(selectors.LOGIN_HEADER_LINK)
     send_keys_to_input(selectors.EMAIL_INPUT_FIELD, request.node.username)
     send_keys_to_input(selectors.PASSWORD_INPUT_FIELD, request.node.password)
