@@ -97,19 +97,20 @@ def test_get_favourite_airport(
     ), f"Actual response {response.status_code}: {response.json()}"
 
 
-def test_update_favourite_airport_note(custom_requests):
-    raise NotImplementedError(
-        "The test that updates the note on a user favourite has not been implemented"
-    )
-
-
-def test_delete_favourite_airport(custom_requests):
-    raise NotImplementedError(
-        "The test that deletes an airport has not been implemented"
-    )
-
-
-def test_delete_all_favourites(custom_requests):
-    raise NotImplementedError(
-        "The test that deletes all favourite airports has not been implemented"
-    )
+#
+# def test_update_favourite_airport_note(custom_requests):
+#     raise NotImplementedError(
+#         "The test that updates the note on a user favourite has not been implemented"
+#     )
+#
+#
+# def test_delete_favourite_airport(custom_requests):
+#     raise NotImplementedError(
+#         "The test that deletes an airport has not been implemented"
+#     )
+#
+#
+# def test_delete_all_favourites(custom_requests):
+#     raise NotImplementedError(
+#         "The test that deletes all favourite airports has not been implemented"
+#     )

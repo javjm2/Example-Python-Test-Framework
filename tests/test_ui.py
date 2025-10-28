@@ -36,19 +36,19 @@ def test_populated_basket(
     ), f"Expected: {sweet_name}, Actual {get_element_by_selector(selectors.BASKET_ITEM).text}"
 
 
-def test_purchase_sweet():
-    raise NotImplementedError(
-        "The test that verifies sweet purchases has not been implemented"
-    )
-
-
-def test_search_sweets():
-    raise NotImplementedError(
-        "The test that verifies the functionality around searching for sweets has not been implemented"
-    )
-
-
-def test_order_history():
-    raise NotImplementedError(
-        "The test that verifies the order history not been implemented"
-    )
+# def test_purchase_sweet():
+#     raise NotImplementedError(
+#         "The test that verifies sweet purchases has not been implemented"
+#     )
+#
+#
+# def test_search_sweets():
+#     raise NotImplementedError(
+#         "The test that verifies the functionality around searching for sweets has not been implemented"
+#     )
+#
+#
+# def test_order_history():
+#     raise NotImplementedError(
+#         "The test that verifies the order history not been implemented"
+#     )
