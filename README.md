@@ -2,16 +2,16 @@
 # Cushon Technical Task Documentation
  ## Project Setup
 
-This section of the guide will go over the steps required to set up this project and get the tests up and running on your system.
+This guide will go over the steps required to set up this project and get the tests up and running on your system.
 
 ### Running the tests
 
 You will want to start off with cloning this repository in your chosen location. After that, open up a terminal at that directory. Inside that terminal run the following commands:
 
-1. `python -m venv venv` - This will create your virtual environment
-2. `pip install -r requirements.txt` - This will install all the project dependencies
-3. `pre-commit install` - This will set up all the git hook scripts
-4. `pytest` - This will execute all the tests
+1. `python -m venv venv` - Create your virtual environment
+2. `pip install -r requirements.txt` - Install all the project dependencies
+3. `pre-commit install` - This will set up all the pre commit git hook scripts
+4. `pytest` - Execute all the tests
 
 ### Running the tests inside a container (optional)
 **Note:** The below steps for running the tests inside a container are not supported on ARM CPUs yet. I will explain in the *Known limitation* section at the bottom of this readme as to why.
@@ -19,8 +19,8 @@ You will want to start off with cloning this repository in your chosen location.
 These tests can also be run inside a docker container. Below are the steps to get the container up and running. You will need to have docker desktop installed beforehand for these steps.
 
 1. Open Docker Desktop
-2. `docker build -t cushon-tests .` - This will build the docker container
-3. `docker run --rm cushon-tests` - This will execute the tests against chrome inside the container and teardown the container
+2. `docker build -t cushon-tests .` - Build the docker container
+3. `docker run --rm cushon-tests` - Execute the tests against chrome inside the container and teardowns the container after
 
 ### Running specific tests
 
@@ -30,9 +30,9 @@ Here are a couple of commands to help you run a subset of the tests
 - Run all System tests - `pytest tests/test_ui.py`
 - Run all API tests - `pytest tests/test_api.py`
 
-**Note:** If you want to use the commands that run specific tests in a container, you will want to preface the commands with `docker run --rm cushon-tests`.
+**Note:** If you want to use the commands that run specific tests inside a container, you will want to preface the commands with `docker run --rm cushon-tests`.
 
-So as an example, the command to run the sweet shop login test will be:
+So as an example, the command to run the sweet shop login test inside a docker container is:
 `docker run --rm cushon-tests pytest -k test_login`
 
 #### Creating a test report
@@ -60,7 +60,7 @@ The first python.exe listed is the one being used which in this case will be:
 
 If you delete that python.exe and then run:
 
-`where python` again then the official python.exe should now the first in the list.
+`where python` again then the official python.exe should now be the first in the list.
 
 ## Known Limitations
 
@@ -69,4 +69,4 @@ The reason for this is that chrome and the chrome webdriver are both required to
 
 The fix for this would be to include another docker file that installs the chrome and chrome-driver binaries compatible with ARM architecture. From what I've researched it looks like there is an image available for this `selenium/standalone-chrome:latest`. So it wouldn't be a massive change to get this to work. I do believe that is out of scope for this task though as the tests do run as expected when not running inside a container and the container steps are optional when executing the tests locally.
 
-**Note:** It is possible to emulate x86 CPUs when running a docker image. The issue with doing that in this case is that emulation is very slow and the tests will fail with an `InvalidSessionIdException` which is commonly due to a sessions being killed/disconnected (I'm assuming due to the slow speed while emulating that the connection to the chrome session dies but that is only my theory based on experimenting with this issue)
+**Note:** It is possible to emulate x86 CPUs when running a docker image. The problem is that emulation is very slow and the tests will fail with an `InvalidSessionIdException`. This error commonly occurs when selenium sessions are killed/disconnected (I'm assuming that due to the slow speed while emulating, the connection to the chrome session dies but that is only my theory based on experimenting with this setup)
