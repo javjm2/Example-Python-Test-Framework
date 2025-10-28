@@ -64,28 +64,37 @@ def test_rate_limiting(custom_requests, base_url):
     ), f"Expected 429 after 101 requests, got {response.status_code}"
 
 
-def test_get_account_token(custom_requests):
-    raise NotImplementedError(
-        "The test that gets the airport token has not been implemented"
+def test_get_account_token(custom_requests, base_url):
+    response = custom_requests().get(f"{base_url}/favourites")
+    assert (
+        response.status_code == 200
+    ), f"Actual response {response.status_code}: {response.json()}"
+
+
+def test_add_favourite_airports(custom_requests, base_url, favourites_payload):
+    response = custom_requests().post(
+        f"{base_url}/favorites",
+        data=favourites_payload("KIX", "This is a test not for my favourite airport"),
     )
+    assert (
+        response.status_code == 200
+    ), f"Actual response {response.status_code}: {response.json()}"
 
 
-def test_get_favourite_airports(custom_requests):
-    raise NotImplementedError(
-        "The test that gets all of a users favourite airports has not been implemented"
+@pytest.mark.parametrize("airport_code", ["KIX", "JFK"])
+def test_get_favourite_airport(
+    custom_requests, base_url, favourites_payload, airport_code
+):
+    custom_requests().post(
+        f"{base_url}/favorites",
+        data=favourites_payload(
+            airport_code, "This is a test not for my favourite airport"
+        ),
     )
-
-
-def test_get_specific_favourite_airports(custom_requests):
-    raise NotImplementedError(
-        "The test that gets a users specific favourite airport has not been implemented"
-    )
-
-
-def test_add_favourite_airport(custom_requests):
-    raise NotImplementedError(
-        "The test that adds an airport to a users favourites has not been implemented"
-    )
+    response = custom_requests().get(f"{base_url}/favorites/{airport_code}")
+    assert (
+        response.status_code == 200
+    ), f"Actual response {response.status_code}: {response.json()}"
 
 
 def test_update_favourite_airport_note(custom_requests):

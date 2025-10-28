@@ -40,3 +40,11 @@ def distance_from_to_country_payload():
 @pytest.fixture
 def token_payload():
     return f"email=test@airportgap.com&password=airportgappassword"
+
+
+@pytest.fixture
+def favourites_payload():
+    def wrap(airport_code, note):
+        return f"airport_id={airport_code}={note}"
+
+    return wrap

@@ -52,8 +52,8 @@ def pytest_runtest_makereport(item):
 
 @pytest.fixture
 def driver(request):
+    # Driver setup
     options = webdriver.ChromeOptions()
-    # options.add_argument('--start-fullscreen')
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--window-size=1920,1080")
@@ -72,6 +72,8 @@ def click_and_assert_url_change(
     get_element_by_selector,
     selectors,
 ):
+    # This fixture is for clicking buttons/links on pages and waiting for the
+    # url to change and for the new page to fully load.
     def wrap(locator, timeout=5) -> None:
         previous_url = driver.current_url
         element = get_element_by_selector(
@@ -84,7 +86,6 @@ def click_and_assert_url_change(
                 lambda driver: driver.execute_script("return document.readyState")
                 == "complete"
             )
-            time.sleep(0.5)
         except (TimeoutException, urllib3.exceptions.ReadTimeoutError):
             pytest.fail(f"Page navigation failed, still on {previous_url} page")
 
@@ -93,6 +94,7 @@ def click_and_assert_url_change(
 
 @pytest.fixture
 def await_url_changes(driver):
+    # This fixture waits for a url to change
     def wrap(url: str, timeout: float = 10):
         wait = WebDriverWait(driver, timeout)
         return wait.until(EC.url_changes(url))
@@ -102,6 +104,7 @@ def await_url_changes(driver):
 
 @pytest.fixture
 def await_clickable(get_element_by_selector):
+    # This fixture waits for an elements to be clickable
     return partial(get_element_by_selector, ec=EC.visibility_of_element_located)
 
 
@@ -165,26 +168,15 @@ def send_keys_to_input(driver, await_clickable):
     return wrap
 
 
-@pytest.fixture
-def get_elements(get_element_by_selector, driver):
-    def wrap(
-        selector: Selector,
-        timeout: float = 10,
-        ec: Any = EC.presence_of_element_located,
-    ):
-        get_element_by_selector(selector=selector, timeout=timeout, ec=ec)
-        return driver.find_elements(value=selector.value, by=selector.by)
-
-    return wrap
-
-
 @pytest.fixture(autouse=True)
 def set_user_details(request):
-    request.node.username = os.environ.get("sweet_shop_user", "you@example.com")
-    request.node.account_name = os.environ.get(
-        "sweet_shop_account_name", "test@user.com"
+    # This fixture is used to set some useful attributes that will be used in
+    # different tests.
+    request.node.username = os.environ.get(
+        "sweet_shop_user", os.environ.get("SWEET_SHOP_USERNAME")
     )
-    request.node.password = os.environ.get("sweet_shop_pass", "Password")
+    request.node.account_name = os.environ.get("SWEET_SHOP_ACCOUNT_NAME")
+    request.node.password = os.environ.get("SWEET_SHOP_PASSWORD")
 
 
 @pytest.fixture()
