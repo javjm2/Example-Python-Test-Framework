@@ -64,8 +64,8 @@ def test_rate_limiting(custom_requests, base_url):
     ), f"Expected 429 after 101 requests, got {response.status_code}"
 
 
-def test_get_account_token(custom_requests, base_url):
-    response = custom_requests().get(f"{base_url}/favourites")
+def test_get_favourites(custom_requests, base_url):
+    response = custom_requests().get(f"{base_url}/favorites")
     assert (
         response.status_code == 200
     ), f"Actual response {response.status_code}: {response.json()}"
