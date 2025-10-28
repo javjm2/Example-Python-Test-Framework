@@ -10,7 +10,7 @@ def config_requests():
     session.headers.update(
         {
             "accept": "application/json",
-            "Authorization": f'Bearer token={os.environ.get("API_KEY")}',
+            "Authorization": f"Bearer token=mXxUJDfAiDqwSS8chG2fSdmW",
         }
     )
     return session
@@ -38,13 +38,16 @@ def distance_from_to_country_payload():
 
 
 @pytest.fixture
-def token_payload():
-    return f"email=test@airportgap.com&password=airportgappassword"
+def teardown_favourites(custom_requests, base_url):
+    custom_requests().delete(f"{base_url}/favorites/clear_all")
 
 
 @pytest.fixture
-def favourites_payload():
-    def wrap(airport_code, note):
-        return f"airport_id={airport_code}={note}"
+def get_favourite_airport_id(custom_requests, base_url):
+    def wrap(airport_code):
+        response = custom_requests().post(
+            f"{base_url}/favorites?airport_id={airport_code}&note=test"
+        )
+        return response.json()["data"]["id"]
 
     return wrap

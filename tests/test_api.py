@@ -71,46 +71,73 @@ def test_get_favourites(custom_requests, base_url):
     ), f"Actual response {response.status_code}: {response.text}"
 
 
-def test_add_favourite_airports(custom_requests, base_url, favourites_payload):
-    response = custom_requests().post(
-        f"{base_url}/favorites",
-        data=favourites_payload("KIX", "This is a test not for my favourite airport"),
-    )
-    assert (
-        response.status_code == 200
-    ), f"Actual response {response.status_code}: {response.text}"
-
-
-@pytest.mark.parametrize("airport_code", ["KIX", "JFK"])
-def test_get_favourite_airport(
-    custom_requests, base_url, favourites_payload, airport_code
+@pytest.mark.parametrize(
+    "airport_code, note", [("GKA", "Test Note 1"), ("KIX", "Test Note 2")]
+)
+def test_add_favourite_airports(
+    teardown_favourites, custom_requests, base_url, airport_code, note
 ):
-    custom_requests().post(
-        f"{base_url}/favorites",
-        data=favourites_payload(
-            airport_code, "This is a test not for my favourite airport"
-        ),
+    response = custom_requests().post(
+        f"{base_url}/favorites?airport_id={airport_code}&note={note}"
     )
-    response = custom_requests().get(f"{base_url}/favorites/{airport_code}")
+    assert (
+        response.status_code == 201
+    ), f"Actual response {response.status_code}: {response.text}"
+    assert response.json()["data"]["type"] == "favorite"
+    assert response.json()["data"]["attributes"]["airport"]["iata"] == airport_code
+    assert response.json()["data"]["attributes"]["note"] == note
+
+
+@pytest.mark.parametrize("airport_code", ["GKA", "KIX"])
+def test_get_favourite_airport(
+    teardown_favourites,
+    get_favourite_airport_id,
+    custom_requests,
+    base_url,
+    airport_code,
+):
+    airport_id = get_favourite_airport_id(airport_code)
+    response = custom_requests().get(f"{base_url}/favorites/{airport_id}")
+    assert (
+        response.status_code == 200
+    ), f"Actual response {response.status_code}: {response.text}"
+    assert response.json()["data"]["attributes"]["airport"]["iata"] == airport_code
+
+
+@pytest.mark.parametrize(
+    "airport_code, note", [("GKA", "Test Note 1"), ("KIX", "Test Note 2")]
+)
+def test_update_favourite_airport(
+    teardown_favourites,
+    get_favourite_airport_id,
+    custom_requests,
+    base_url,
+    airport_code,
+    note,
+):
+    airport_id = get_favourite_airport_id(airport_code)
+    response = custom_requests().patch(f"{base_url}/favorites/{airport_id}?note={note}")
+    assert response.json()["data"]["attributes"]["note"] == note
+
+
+@pytest.mark.parametrize("airport_code", ["GKA", "KIX"])
+def test_delete_favourite_airport(
+    teardown_favourites,
+    custom_requests,
+    base_url,
+    airport_code,
+    get_favourite_airport_id,
+):
+    airport_id = get_favourite_airport_id(airport_code)
+    response = custom_requests().get(f"{base_url}/favorites/{airport_id}")
     assert (
         response.status_code == 200
     ), f"Actual response {response.status_code}: {response.text}"
 
-
-#
-# def test_update_favourite_airport_note(custom_requests):
-#     raise NotImplementedError(
-#         "The test that updates the note on a user favourite has not been implemented"
-#     )
-#
-#
-# def test_delete_favourite_airport(custom_requests):
-#     raise NotImplementedError(
-#         "The test that deletes an airport has not been implemented"
-#     )
-#
-#
-# def test_delete_all_favourites(custom_requests):
-#     raise NotImplementedError(
-#         "The test that deletes all favourite airports has not been implemented"
-#     )
+    # Confirm that the entry has been deleted successfully by searching for it
+    # again after the deletion happens
+    custom_requests().delete(f"{base_url}/favorites/{airport_id}")
+    response = custom_requests().get(f"{base_url}/favorites/{airport_id}")
+    assert (
+        response.status_code == 404
+    ), f"Actual response {response.status_code}: {response.text}"
