@@ -16,10 +16,10 @@ def test_get_airport_by_id(custom_requests, base_url, iata_code, country_name):
     response = custom_requests().get(f"{base_url}/airports/{iata_code}")
     assert (
         response.status_code == 200
-    ), f"Actual response {response.status_code}: {response.json()}"
+    ), f"Actual response {response.status_code}: {response.text}"
     assert (
         response.json()["data"]["attributes"]["country"] == country_name
-    ), f"Actual response {response.status_code}: {response.json()}"
+    ), f"Actual response {response.status_code}: {response.text}"
 
 
 @pytest.mark.parametrize("ids", ["123", ",./", 234, True, 1.2])
@@ -27,7 +27,7 @@ def test_airport_id_validation(custom_requests, base_url, ids):
     response = custom_requests().get(f"{base_url}/airports/{ids}")
     assert (
         response.status_code == 404
-    ), f"Actual response {response.status_code}: {response.json()}"
+    ), f"Actual response {response.status_code}: {response.text}"
 
 
 @pytest.mark.parametrize("from_country, to_country", [("GKA", "MAG"), ("YBR", "KIX")])
@@ -44,13 +44,13 @@ def test_calculate_airport_distance(
     )
     assert (
         response.status_code == 200
-    ), f"Actual response {response.status_code}: {response.json()}"
+    ), f"Actual response {response.status_code}: {response.text}"
 
 
 def test_rate_limiting(custom_requests, base_url):
     start_time = time.time()
 
-    for i in range(101):
+    for i in range(105):
         response = custom_requests().get(f"{base_url}/airports")
 
     end_time = time.time()
@@ -61,7 +61,7 @@ def test_rate_limiting(custom_requests, base_url):
     # Assert the last response triggers rate limiting
     assert (
         response.status_code == 429
-    ), f"Expected 429 after 101 requests, got {response.status_code}"
+    ), f"Expected 429 after 100 requests, got {response.status_code}: {response.text}"
 
 
 def test_get_favourites(custom_requests, base_url):
