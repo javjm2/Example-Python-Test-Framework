@@ -68,7 +68,7 @@ def test_get_favourites(custom_requests, base_url):
     response = custom_requests().get(f"{base_url}/favorites")
     assert (
         response.status_code == 200
-    ), f"Actual response {response.status_code}: {response.json()}"
+    ), f"Actual response {response.status_code}: {response.text}"
 
 
 def test_add_favourite_airports(custom_requests, base_url, favourites_payload):
@@ -78,7 +78,7 @@ def test_add_favourite_airports(custom_requests, base_url, favourites_payload):
     )
     assert (
         response.status_code == 200
-    ), f"Actual response {response.status_code}: {response.json()}"
+    ), f"Actual response {response.status_code}: {response.text}"
 
 
 @pytest.mark.parametrize("airport_code", ["KIX", "JFK"])
@@ -94,7 +94,7 @@ def test_get_favourite_airport(
     response = custom_requests().get(f"{base_url}/favorites/{airport_code}")
     assert (
         response.status_code == 200
-    ), f"Actual response {response.status_code}: {response.json()}"
+    ), f"Actual response {response.status_code}: {response.text}"
 
 
 #
