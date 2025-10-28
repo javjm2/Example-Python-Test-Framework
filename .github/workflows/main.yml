@@ -6,16 +6,30 @@ on:
 jobs:
   ui-tests:
     runs-on: ubuntu-latest
+    env:
+      SWEET_SHOP_ACCOUNT_NAME: ${{ secrets.SWEET_SHOP_ACCOUNT_NAME }}
+      SWEET_SHOP_PASSWORD: ${{ secrets.SWEET_SHOP_PASSWORD }}
+      SWEET_SHOP_USERNAME: ${{ secrets.SWEET_SHOP_USERNAME }}
     steps:
        - uses: actions/checkout@v3
        - run: docker build -t cushon-tests .
-       - run: docker run --rm cushon-tests pytest tests/test_ui.py
+       - run: docker run --rm \
+            -e SWEET_SHOP_ACCOUNT_NAME \
+            -e SWEET_SHOP_PASSWORD \
+            -e SWEET_SHOP_USERNAME \
+            cushon-tests pytest tests/test_ui.py
 
   api-tests:
     runs-on: ubuntu-latest
     env:
       API_KEY: ${{ secrets.API_KEY }}
     steps:
-       - uses: actions/checkout@v3
-       - run: docker build -t cushon-tests .
-       - run: docker run --rm -e API_KEY cushon-tests pytest tests/test_api.py
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+      - run: pytest -vv tests/test_api.py
