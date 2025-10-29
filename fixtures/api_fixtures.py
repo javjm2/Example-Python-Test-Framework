@@ -10,7 +10,7 @@ def config_requests():
     session.headers.update(
         {
             "accept": "application/json",
-            "Authorization": f"Bearer token=mXxUJDfAiDqwSS8chG2fSdmW",
+            "Authorization": f"Bearer token={os.environ.get('API_KEY')}",
         }
     )
     return session
@@ -43,11 +43,23 @@ def teardown_favourites(custom_requests, base_url):
 
 
 @pytest.fixture
-def get_favourite_airport_id(custom_requests, base_url):
+def add_favourite_airport_id(request, custom_requests, base_url, api_response_error):
     def wrap(airport_code):
         response = custom_requests().post(
             f"{base_url}/favorites?airport_id={airport_code}&note=test"
         )
+        if response.status_code != 201:
+            pytest.fail(
+                f"The test failed in the {request.fixturename} fixture. {api_response_error(response)}"
+            )
         return response.json()["data"]["id"]
+
+    return wrap
+
+
+@pytest.fixture
+def api_response_error():
+    def wrap(response):
+        return f"Actual response {response.status_code}: {response.text}"
 
     return wrap
