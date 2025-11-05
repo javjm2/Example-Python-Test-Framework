@@ -1,5 +1,5 @@
 
-# Cushon Technical Task Documentation
+# Example Framework Documentation
  ## Project Setup
 
 This guide will go over the steps required to set up this project and get the tests up and running on your system.
@@ -19,8 +19,8 @@ You will want to start off with cloning this repository in your chosen location.
 These tests can also be run inside a docker container. Below are the steps to get the container up and running. You will need to have docker desktop installed beforehand for these steps.
 
 1. Open Docker Desktop
-2. `docker build -t cushon-tests .` - Build the docker container
-3. `docker run --rm cushon-tests` - Execute the tests against chrome inside the container and teardowns the container after
+2. `docker build -t example-tests .` - Build the docker container
+3. `docker run --rm example-tests` - Execute the tests against chrome inside the container and teardowns the container after
 
 ### Running specific tests
 
@@ -30,10 +30,10 @@ Here are a couple of commands to help you run a subset of the tests
 - Run all System tests - `pytest tests/test_ui.py`
 - Run all API tests - `pytest tests/test_api.py`
 
-**Note:** If you want to use the commands that run specific tests inside a container, you will want to preface the commands with `docker run --rm cushon-tests`.
+**Note:** If you want to use the commands that run specific tests inside a container, you will want to preface the commands with `docker run --rm example-tests`.
 
 So as an example, the command to run the sweet shop login test inside a docker container is:
-`docker run --rm cushon-tests pytest -k test_login`
+`docker run --rm example-tests pytest -k test_login`
 
 #### Creating a test report
 

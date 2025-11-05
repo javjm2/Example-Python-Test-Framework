@@ -13,7 +13,7 @@ jobs:
     steps:
        - name: Build the docker container
          uses: actions/checkout@v3
-       - run: docker build -t cushon-tests .
+       - run: docker build -t e-tests .
 
        - name: Run the Sweet Shop Tests
          run: |
@@ -21,7 +21,7 @@ jobs:
               -e SWEET_SHOP_ACCOUNT_NAME \
               -e SWEET_SHOP_PASSWORD \
               -e SWEET_SHOP_USERNAME \
-              cushon-tests pytest tests/test_ui.py
+              example-tests pytest tests/test_ui.py
 
   api-tests:
     runs-on: ubuntu-latest
